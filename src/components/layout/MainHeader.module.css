@@ -1,0 +1,17 @@
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5rem;
+    display: flex;
+    justify-content:space-around;
+    align-items: center;
+    background: #b2cec5;
+    padding: 0 2rem;
+  }
+  
+  
+  .main-header img {
+    align-items: center;
+  }
