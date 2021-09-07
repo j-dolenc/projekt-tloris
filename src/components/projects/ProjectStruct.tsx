@@ -1,31 +1,27 @@
-import React, { Fragment, useState } from "react";
-import classes from "./ProjectStruct.module.css";
-import SortableTree from '@nosferatu500/react-sortable-tree';
-import '@nosferatu500/react-sortable-tree/style.css'; // This only needs to be imported once in your app
+import React, { useState } from "react";
+//import classes from "./ProjectStruct.module.css";
+import SortableTree from "@nosferatu500/react-sortable-tree";
+import "@nosferatu500/react-sortable-tree/style.css"; // This only needs to be imported once in your app
 //import { TreeItem } from "@nosferatu500/react-sortable-tree";
 import { TreeItem } from "react-sortable-tree";
 
 const ProjectStruct = () => {
-  const initialData=[
-    { title: 'Chicken', children: [{ title: 'Egg' }] },
-    { title: 'Fish', children: [{ title: 'fingerline' }] },
+  const initialData = [
+    { title: "Chicken", children: [{ title: "Egg" }] },
+    { title: "Fish", children: [{ title: "fingerline" }] },
   ];
 
-  const [treeData,setTreeData] = useState<TreeItem[]>(initialData);
+  const [treeData, setTreeData] = useState<TreeItem[]>(initialData);
   const onChangeHandler = (treeData: TreeItem[]) => {
-
     console.log(treeData);
     setTreeData(treeData);
     //setTreeData();
-}
+  };
   return (
     <div>
-      <p>kuku</p>
+      <h2>{'{CURRENT PROJECT}'}</h2>
       <div style={{ height: 400 }}>
-        <SortableTree
-          treeData={treeData}
-          onChange={onChangeHandler}
-        />
+        <SortableTree treeData={treeData} onChange={onChangeHandler} />
       </div>
     </div>
   );
