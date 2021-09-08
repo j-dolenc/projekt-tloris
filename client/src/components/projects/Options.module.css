@@ -6,11 +6,12 @@
     margin-left:1rem;
     margin-bottom: 1rem;
     width:50%;
-    height:2rem;
+    height:3rem;
     background-color: seagreen;
     border: solid 1px black; 
     box-shadow:  1px 3px 0 rgba(0,0,0,0.2);
     border-radius: 12px;
+    display:inline-block;
     
     /* display: flex;
   justify-content: center;

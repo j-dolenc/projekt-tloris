@@ -1,6 +1,8 @@
 import classes from "./NavBar.module.css";
-
+import { useContext } from "react";
+import { LoginContext } from "../../store/login-context";
 const NavBar = () => {
+  const loginCtx = useContext(LoginContext);
   return (
     <nav className={classes.nav}>
       <ul>
@@ -13,7 +15,7 @@ const NavBar = () => {
         </li>
         
         <li>
-          <button>Jurij Dolenc</button>
+          <button>{`${loginCtx.name} ${loginCtx.surname}`}</button>
         </li>
       </ul>
     </nav>

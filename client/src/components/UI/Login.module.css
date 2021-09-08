@@ -1,0 +1,73 @@
+.auth {
+    /* margin: 3rem auto; */
+    margin: auto;
+    /* max-width: 25rem; */
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .auth h1 {
+    text-align: center;
+    color: rgb(43, 139, 104);
+  }
+  
+  .control {
+    margin-bottom: 0.5rem;
+  }
+  
+  .control label {
+    display: block;
+    color: rgb(134, 165, 153);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .control input {
+    font: inherit;
+    background-color: rgb(239, 245, 243);
+    color: rgb(48, 51, 50);
+    border-radius: 4px;
+    border: 1px solid rgb(181, 206, 197);
+    width: 100%;
+    text-align: left;
+    padding: 0.25rem;
+  }
+  
+  .actions {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction:row;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+  
+  .actions button {
+    cursor: pointer;
+    font: inherit;
+    color: white;
+    background-color: #639978;
+    border: 1.5px solid #456b54;
+    border-radius: 10px;
+    padding: 0.5rem 2.5rem;
+  }
+  
+  .actions button:hover {
+    background-color: #456b54;
+    border-color: #639978;
+  }
+  
+  .actions .toggle {
+    margin-top: 1rem;
+    background-color: transparent;
+    color: #40614d;
+    border: none;
+    padding: 0.15rem 1.5rem;
+  }
+  
+  .actions .toggle:hover {
+    background-color: transparent;
+    color: #639978;
+  }

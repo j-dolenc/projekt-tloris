@@ -6,6 +6,10 @@
       "dom.iterable",
       "esnext"
     ],
+    // "outDir": "./dist" ,
+    // "rootDir": "./src" ,
+    "experimentalDecorators": true, 
+    "emitDecoratorMetadata": true, 
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
