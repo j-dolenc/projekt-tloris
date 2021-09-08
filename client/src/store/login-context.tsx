@@ -5,21 +5,20 @@ type LoginContextObj = {
   username: string;
   name: string;
   surname: string;
-  addUser: (usename: string) => void;
+  addUser: (usename: string, name: string,surname: string) => void;
 };
 export const LoginContext = React.createContext<LoginContextObj>({
   username: "",
   name: "",
   surname: "",
-  addUser: (username: string) => {},
+  addUser: (username: string, name: string,surname: string) => {},
 });
 
 const LoginContextProvider: React.FC = (props) => {
   const [user, setUser] = useState({ username: "", name: "", surname: "" });
-  const addUser = (username: string) => {
-    let name='';
-    let surname='';
-
+  const addUser = (username: string, name: string,surname: string) => {
+    
+    
     //TODO DOSTOP DO BAZE
     setUser({ username: username, name: name, surname: surname });
   };

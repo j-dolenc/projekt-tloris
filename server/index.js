@@ -122,6 +122,125 @@ app.put("/files/:id", function (req, res) { return __awaiter(_this, void 0, void
         }
     });
 }); });
+app["delete"]("/files/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var id, deleteFile, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                id = req.params.id;
+                return [4 /*yield*/, pool1.query("DELETE FROM datoteke where id= $1", [id])];
+            case 1:
+                deleteFile = _a.sent();
+                res.json("File was deleted.");
+                return [3 /*break*/, 3];
+            case 2:
+                error_5 = _a.sent();
+                console.error(error_5.message);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+app.post("/users", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var newFile, error_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool1.query("insert into datoteke(ime, opis, povezava,starts_id,nivo,vidijolahko) values ('prvaDatoteka','gibberish','tam nekje',1,2,'1,2,3') returning *")];
+            case 1:
+                newFile = _a.sent();
+                res.json(newFile.rows[0]);
+                return [3 /*break*/, 3];
+            case 2:
+                error_6 = _a.sent();
+                console.error(error_6.message);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+app.get("/users", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var vseDatoteke, error_7;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool1.query("SELECT * from datoteke")];
+            case 1:
+                vseDatoteke = _a.sent();
+                res.json(vseDatoteke.rows);
+                return [3 /*break*/, 3];
+            case 2:
+                error_7 = _a.sent();
+                console.error(error_7.message);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+app.get("/users/:username", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var username, izbraneDatoteke, error_8;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                username = req.params.username;
+                return [4 /*yield*/, pool1.query("SELECT * from zaposleni where $1=username", [username])];
+            case 1:
+                izbraneDatoteke = _a.sent();
+                res.json(izbraneDatoteke.rows[0]);
+                return [3 /*break*/, 3];
+            case 2:
+                error_8 = _a.sent();
+                console.error(error_8.message);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+app.put("/users/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var id, description, updateFiles, error_9;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                id = req.params.id;
+                description = req.body.description;
+                return [4 /*yield*/, pool1.query("UPDATE datoteke set opis = $1 where id= $2", [description, id])];
+            case 1:
+                updateFiles = _a.sent();
+                res.json("datoteke updejtane");
+                return [3 /*break*/, 3];
+            case 2:
+                error_9 = _a.sent();
+                console.error(error_9.message);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+app["delete"]("/users/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var id, deleteFile, error_10;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                id = req.params.id;
+                return [4 /*yield*/, pool1.query("DELETE FROM datoteke where id= $1", [id])];
+            case 1:
+                deleteFile = _a.sent();
+                res.json("File was deleted.");
+                return [3 /*break*/, 3];
+            case 2:
+                error_10 = _a.sent();
+                console.error(error_10.message);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 app.listen(5000, function () {
     console.log("server started on port 5000");
 });

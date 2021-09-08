@@ -8,7 +8,7 @@ const Login: React.FC <{onCancelClick:() => void}> = (props) =>{
     const userRef = useRef<HTMLInputElement>(null);
     const passRef = useRef<HTMLInputElement>(null);
     const loginCtx = useContext(LoginContext);
-    const onSubmitHanlder = (event:React.FormEvent) => {
+    const onSubmitHanlder =async (event:React.FormEvent) => {
         event.preventDefault();
         const enteredUsername= userRef.current!.value;
         const enteredPassword= passRef.current!.value;
@@ -17,7 +17,15 @@ const Login: React.FC <{onCancelClick:() => void}> = (props) =>{
             return;
         }
         //TODO: pojdi v bazo po ime in priimek za display
-        loginCtx.addUser(enteredUsername);
+        try {
+            
+            const response = await fetch(`http://localhost:5000/users/${enteredUsername}`);
+            const jsonData = await response.json();
+            loginCtx.addUser(enteredUsername,jsonData.ime,jsonData.priimek);
+        } catch (error:any) {
+            console.error(error.message);
+        }
+        //loginCtx.addUser(enteredUsername);
         userRef.current!.value= '';
         passRef.current!.value= '';
         props.onCancelClick();
