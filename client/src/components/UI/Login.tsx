@@ -16,10 +16,14 @@ const Login: React.FC <{onCancelClick:() => void}> = (props) =>{
         if(enteredPassword.trim().length === 0 ||enteredUsername.trim().length === 0) {
             return;
         }
-        //TODO: pojdi v bazo po ime in priimek za display
+        //TODO: preveri najprej geslo, a ga moreš hashat preden ga pošlješ na server?.. verjetno
+        //poglej ce obstaja user to je 
+        
+        //TODO: pojdi v bazo po ime in priimek za display, vzemi kar vse podatke razen gesla, rabiš tudi id, da veš katere projekte bo lahko gledal...
+
         try {
             
-            const response = await fetch(`http://localhost:5000/users/${enteredUsername}`);
+            const response = await fetch(`http://192.168.38.181:5000/users/${enteredUsername}`);//?pass=${enteredPassword}
             const jsonData = await response.json();
             loginCtx.addUser(enteredUsername,jsonData.ime,jsonData.priimek);
         } catch (error:any) {
@@ -40,7 +44,7 @@ const Login: React.FC <{onCancelClick:() => void}> = (props) =>{
     //     setPass((prev)=> [tempass,event.currentTarget.value]);
     // }
     return <section className={classes.auth}>
-        <h1>Login</h1>
+        <h1>Log In</h1>
         <form onSubmit={onSubmitHanlder}>
             <div className={classes.control}>
             <label htmlFor='username'>Username or Email</label>
@@ -49,6 +53,7 @@ const Login: React.FC <{onCancelClick:() => void}> = (props) =>{
             <div className={classes.control}>
            <label htmlFor='password'>Password</label>
             <input  type='password' id='password' ref={passRef}></input>
+            <input type="submit" value="Submit"></input>
             </div>
             <div className={classes.actions}>
                 <button onClick={props.onCancelClick}>Cancel</button>
