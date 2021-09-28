@@ -9,7 +9,7 @@ app.use(express.json()); //req body
 
 app.get("/users",async(req,res) => {
     try {
-        const vseDatoteke= await pool1.query("SELECT * from users");
+        const vseDatoteke= await pool1.query("SELECT * from zaposleni");
         res.json(vseDatoteke.rows);
     } catch (error) {
         console.error(error.message);
@@ -58,10 +58,33 @@ app.post("/users", async (req, res) => {
   
   app.put("/users/:id",async(req,res) =>{
       try {
-          const {id} = req.params;
-          const {description} = req.body;
-          const updateFiles = await pool1.query("UPDATE datoteke set opis = $1 where id= $2",[description,id]);
-          res.json("datoteke updejtane");
+        const {id} = req.params;
+        let propValue:any;
+        let prop:string;
+        const body= req.body;
+        if(body.hasOwnProperty('ime')){
+        prop='ime';
+        propValue=body.ime;
+        }
+        else if(body.hasOwnProperty('priimek')){
+            prop='priimek';
+            propValue=body.priimek;
+        }
+        else if(body.hasOwnProperty('email')){
+            prop='email';
+            propValue=body.email;
+        }
+        else if(body.hasOwnProperty('username')){
+            prop='username';
+            propValue=body.username;
+        }
+        else if(body.hasOwnProperty('oddelek_id')){
+            prop='oddelek_id';
+            propValue=body.oddelek_id;
+        }
+        
+        const updateFiles = await pool1.query("UPDATE zaposleni set $1 = $2 where id= $3",[prop,propValue,id]);
+        res.json("datoteke updejtane");
       } catch (error) {
           console.error(error.message);
       }
@@ -146,7 +169,7 @@ app.post("/users", async (req, res) => {
 
 //izbrisi vse datoteke povezane z projektom
 //TODO: rekurzivno s esprehodi cez drevo in izbrisi vsak node ki ga ne rabis vec
-app.delete("/projects/:id",async (req,res) => {
+app.delete("/projects/delete/:id",async (req,res) => {
     try {
         const {id} = req.params;
         //TODO: rekurzivni sprehod... :(
@@ -155,6 +178,57 @@ app.delete("/projects/:id",async (req,res) => {
     } catch (error) {
         console.error(error.message);
     }
+});
+
+app.put("/projects/:id", async (req,res) =>{
+    try {
+        const {id} = req.params;
+        let props: { prop: string, value:any }[];
+        
+        const body= req.body;
+        if(body.hasOwnProperty('ime')){
+
+            
+            props.push({prop:'ime',value:body.ime});
+        }
+        if(body.hasOwnProperty('opis')){
+            props.push({prop:'opis',value:body.opis});
+            // prop='opis';
+            // propValue=body.priimek;
+        }
+        if(body.hasOwnProperty('povezava')){
+            props.push({prop:'povezava',value:body.povezava});
+            // prop='stars_id';
+            // propValue=body.email;
+        }
+        if(body.hasOwnProperty('stars_id')){
+            props.push({prop:'stars_id',value:body.stars_id});
+            // prop='stars_id';
+            // propValue=body.username;
+        }
+        if(body.hasOwnProperty('spremenjen')){
+            props.push({prop:'spremenjen',value:body.spremenjen});
+            // prop='spremenjen';
+            // propValue=body.oddelek_id;
+        }
+        if(body.hasOwnProperty('urejal')){
+            props.push({prop:'urejal',value:body.urejal});
+            // prop='spremenjen';
+            // propValue=body.oddelek_id;
+        }
+        if(body.hasOwnProperty('vidijolahko')){
+            props.push({prop:'vidijolahko',value:body.vidijolahko});
+            // prop='spremenjen';
+            // propValue=body.oddelek_id;
+        }
+        for(let i= 0;  i <props.length;i++){
+            const updateFiles = await pool1.query("UPDATE datoteke set $1 = $2 where id= $3",[props[i].prop,props[i].value,id]);
+            res.json("datoteka z id:$1 updejtana",[id]);
+        }
+        
+      } catch (error) {
+          console.error(error.message);
+      }
 });
 
 
