@@ -1,21 +1,20 @@
-import { prependOnceListener } from "process";
 import { Fragment, useState } from "react";
 
 import Login from "../components/UI/Login";
 
 import classes from "./Modal.module.css";
 
-const Modal = () => {
+const TrueModal: React.FC  = (props) => {
   const [showModal, setShowModal] = useState(true);
   const onBackdropClick = () => {
     setShowModal(false);
   };
   const modal = (
     <div>
-      <div className={classes.backdrop}></div>
+      <div className={classes.backdrop} onClick={onBackdropClick}></div>
       <div className={classes.modal}>
         <div className={classes.content}>
-          <Login onCancelClick={onBackdropClick}/>
+          {props.children}
         </div>
       </div>
     </div>
@@ -26,4 +25,4 @@ const Modal = () => {
     </Fragment>
   );
 };
-export default Modal;
+export default TrueModal;

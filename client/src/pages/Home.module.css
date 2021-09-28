@@ -8,3 +8,33 @@
 .home ul{
     list-style-position:inside;
 }
+.btngrp{
+    flex-direction: row;
+}
+.btn{
+    font-weight: bold;
+    margin-left:1rem;
+    margin-bottom: 1rem;
+    width:50%;
+    height:3rem;
+    background-color: seagreen;
+    color:rgb(31, 31, 31);
+    border: solid 1px black; 
+    box-shadow:  1px 3px 0 rgba(0,0,0,0.2);
+    border-radius: 12px;
+    display:inline-block;
+    
+    /* display: flex;
+  justify-content: center;
+  align-items: center; */
+}
+.btn:hover{
+    color:rgb(212, 211, 211);
+    background-color: rgb(31, 88, 56);
+    border: solid 1px rgb(99, 126, 111); 
+}
+.btn:active {
+    background-color: rgb(31, 88, 56);
+    box-shadow: 0 2px #666;
+    transform: translateY(2px);
+  }

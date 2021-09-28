@@ -23,7 +23,7 @@ const Login: React.FC <{onCancelClick:() => void}> = (props) =>{
 
         try {
             
-            const response = await fetch(`http://192.168.38.181:5000/users/${enteredUsername}`);//?pass=${enteredPassword}
+            const response = await fetch(`http://192.168.38.164:5000/users/${enteredUsername}?passoword=${enteredPassword}`);//?pass=${enteredPassword}
             const jsonData = await response.json();
             loginCtx.addUser(enteredUsername,jsonData.ime,jsonData.priimek);
         } catch (error:any) {
@@ -56,7 +56,7 @@ const Login: React.FC <{onCancelClick:() => void}> = (props) =>{
             <input type="submit" value="Submit"></input>
             </div>
             <div className={classes.actions}>
-                <button onClick={props.onCancelClick}>Cancel</button>
+                <button >Cancel</button>
                 <button>Log In</button>
             </div>
         </form>

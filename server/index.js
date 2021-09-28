@@ -39,19 +39,20 @@ var express = require("express");
 var app = express();
 var cors = require("cors");
 var pool1 = require("./db");
+var PoolUser = require("pg").Pool;
 //middleware
 app.use(cors());
 app.use(express.json()); //req body
-app.post("/files", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var newFile, error_1;
+app.get("/users", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var vseDatoteke, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool1.query("insert into datoteke(ime, opis, povezava,starts_id,nivo,vidijolahko) values ('prvaDatoteka','gibberish','tam nekje',1,2,'1,2,3') returning *")];
+                return [4 /*yield*/, pool1.query("SELECT * from users")];
             case 1:
-                newFile = _a.sent();
-                res.json(newFile.rows[0]);
+                vseDatoteke = _a.sent();
+                res.json(vseDatoteke.rows);
                 return [3 /*break*/, 3];
             case 2:
                 error_1 = _a.sent();
@@ -61,16 +62,31 @@ app.post("/files", function (req, res) { return __awaiter(_this, void 0, void 0,
         }
     });
 }); });
-app.get("/files", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var vseDatoteke, error_2;
+//password check
+// app.get("/users/:password",async(req,res) => {
+//     try {
+//     } catch (error) {
+//         console.error(error.message);
+//     }
+// });
+app.get("/users/:username", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var username, pool, izbraneDatoteke, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool1.query("SELECT * from datoteke")];
+                username = req.params.username;
+                pool = new PoolUser({
+                    user: username,
+                    password: username,
+                    host: "192.168.38.164",
+                    port: 5432,
+                    database: "irgodb"
+                });
+                return [4 /*yield*/, pool1.query("SELECT * from zaposleni where $1=username", [username])];
             case 1:
-                vseDatoteke = _a.sent();
-                res.json(vseDatoteke.rows);
+                izbraneDatoteke = _a.sent();
+                res.json(izbraneDatoteke.rows[0]);
                 return [3 /*break*/, 3];
             case 2:
                 error_2 = _a.sent();
@@ -80,18 +96,16 @@ app.get("/files", function (req, res) { return __awaiter(_this, void 0, void 0, 
         }
     });
 }); });
-app.get("/files/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var id, izbraneDatoteke, error_3;
+app.post("/users", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var newFile, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                id = req.params.id;
-                return [4 /*yield*/, pool1.query("SELECT * from datoteke where $1=id", [id])];
+                return [4 /*yield*/, pool1.query("insert into zaposleni(ime,priimek,email,username,password,oddelek_id) values ('peter','Novak','@si','asdsad',2) returning *")];
             case 1:
-                izbraneDatoteke = _a.sent();
-                res.json(izbraneDatoteke.rows[0]);
-                res.json(izbraneDatoteke.rows);
+                newFile = _a.sent();
+                res.json(newFile.rows[0]);
                 return [3 /*break*/, 3];
             case 2:
                 error_3 = _a.sent();
@@ -101,7 +115,7 @@ app.get("/files/:id", function (req, res) { return __awaiter(_this, void 0, void
         }
     });
 }); });
-app.put("/files/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+app.put("/users/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     var id, description, updateFiles, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -122,7 +136,7 @@ app.put("/files/:id", function (req, res) { return __awaiter(_this, void 0, void
         }
     });
 }); });
-app["delete"]("/files/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+app["delete"]("/users/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     var id, deleteFile, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -142,27 +156,9 @@ app["delete"]("/files/:id", function (req, res) { return __awaiter(_this, void 0
         }
     });
 }); });
-app.post("/users", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var newFile, error_6;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool1.query("insert into datoteke(ime, opis, povezava,starts_id,nivo,vidijolahko) values ('prvaDatoteka','gibberish','tam nekje',1,2,'1,2,3') returning *")];
-            case 1:
-                newFile = _a.sent();
-                res.json(newFile.rows[0]);
-                return [3 /*break*/, 3];
-            case 2:
-                error_6 = _a.sent();
-                console.error(error_6.message);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
-app.get("/users", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var vseDatoteke, error_7;
+//podatki o vseh projektih
+app.get("/files", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var vseDatoteke, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -173,6 +169,27 @@ app.get("/users", function (req, res) { return __awaiter(_this, void 0, void 0, 
                 res.json(vseDatoteke.rows);
                 return [3 /*break*/, 3];
             case 2:
+                error_6 = _a.sent();
+                console.error(error_6.message);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+//samo osnovni podatki o vseh projektih
+app.get("/projects", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var aboutProjekti, error_7;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool1.query("SELECT * from datoteke where nivo=0")];
+            case 1:
+                aboutProjekti = _a.sent();
+                //res.json("datoteke updejtane");
+                res.json(aboutProjekti.rows);
+                return [3 /*break*/, 3];
+            case 2:
                 error_7 = _a.sent();
                 console.error(error_7.message);
                 return [3 /*break*/, 3];
@@ -180,17 +197,17 @@ app.get("/users", function (req, res) { return __awaiter(_this, void 0, void 0, 
         }
     });
 }); });
-app.get("/users/:username", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var username, izbraneDatoteke, error_8;
+//podatki o tocno dolocenem projektu
+//TODO: rekurzivno pridobivanje podatkov iz baze --> tree traversal
+app.get("/projects/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var aboutProjekti, error_8;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                username = req.params.username;
-                return [4 /*yield*/, pool1.query("SELECT * from zaposleni where $1=username", [username])];
+                return [4 /*yield*/, pool1.query("SELECT * from datoteke where nivo=0")];
             case 1:
-                izbraneDatoteke = _a.sent();
-                res.json(izbraneDatoteke.rows[0]);
+                aboutProjekti = _a.sent();
                 return [3 /*break*/, 3];
             case 2:
                 error_8 = _a.sent();
@@ -200,18 +217,26 @@ app.get("/users/:username", function (req, res) { return __awaiter(_this, void 0
         }
     });
 }); });
-app.put("/users/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var id, description, updateFiles, error_9;
+//add project --> dodajanje nivoja 0 in osnovnih podatkov o projektu...
+//to je lahko tudi za dodajanje filovv na splošno, samo nastavit moraš nivo...
+app.post("/projects", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var ime, opis, povezava, stars_id, nivo, vidijolahko, urejal, lastnik, newProject, error_9;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                id = req.params.id;
-                description = req.body.description;
-                return [4 /*yield*/, pool1.query("UPDATE datoteke set opis = $1 where id= $2", [description, id])];
+                ime = req.body.ime;
+                opis = req.body.opis;
+                povezava = req.body.povezava;
+                stars_id = req.body.stars_id;
+                nivo = req.body.nivo;
+                vidijolahko = req.body.vidijolahko;
+                urejal = req.body.urejal;
+                lastnik = req.body.lastnik;
+                return [4 /*yield*/, pool1.query("insert into datoteke(ime,opis,povezava,stars_id,nivo,vidijolahko) values($1,$2,$3,$4,$5,$6) returning *", [ime, opis, povezava, stars_id, nivo, vidijolahko])];
             case 1:
-                updateFiles = _a.sent();
-                res.json("datoteke updejtane");
+                newProject = _a.sent();
+                res.json(newProject.rows[0]);
                 return [3 /*break*/, 3];
             case 2:
                 error_9 = _a.sent();
@@ -221,7 +246,7 @@ app.put("/users/:id", function (req, res) { return __awaiter(_this, void 0, void
         }
     });
 }); });
-app["delete"]("/users/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+app["delete"]("/projects/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     var id, deleteFile, error_10;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -241,6 +266,46 @@ app["delete"]("/users/:id", function (req, res) { return __awaiter(_this, void 0
         }
     });
 }); });
+// app.post("/files", async (req, res) => {
+//   //await
+//   try {
+//     const newFile = await pool1.query(
+//       "insert into datoteke(ime, opis, povezava,starts_id,nivo,vidijolahko) values ('prvaDatoteka','gibberish','tam nekje',1,2,'1,2,3') returning *"
+//     );
+//     res.json(newFile.rows[0]);
+//   } catch (error) {
+//     console.error(error.message);
+//   }
+// });
+// app.get("/files/:id",async(req,res) => {
+//     try {
+//         const {id} = req.params;
+//         const izbraneDatoteke= await pool1.query("SELECT * from datoteke where $1=id",[id]);
+//         res.json(izbraneDatoteke.rows[0]);
+//         res.json(izbraneDatoteke.rows);
+//     } catch (error) {
+//         console.error(error.message);
+//     }
+// })
+// app.put("/files/:id",async(req,res) =>{
+//     try {
+//         const {id} = req.params;
+//         const {description} = req.body;
+//         const updateFiles = await pool1.query("UPDATE datoteke set opis = $1 where id= $2",[description,id]);
+//         res.json("datoteke updejtane");
+//     } catch (error) {
+//         console.error(error.message);
+//     }
+// });
+// app.delete("/files/:id",async(req,res) =>{
+//     try {
+//         const {id} = req.params;
+//         const deleteFile = await pool1.query("DELETE FROM datoteke where id= $1",[id]);
+//         res.json("File was deleted.");
+//     } catch (error) {
+//         console.error(error.message);
+//     }
+// });
 app.listen(5000, function () {
     console.log("server started on port 5000");
 });
