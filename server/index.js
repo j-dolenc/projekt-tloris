@@ -49,7 +49,7 @@ app.get("/users", function (req, res) { return __awaiter(_this, void 0, void 0, 
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool1.query("SELECT * from users")];
+                return [4 /*yield*/, pool1.query("SELECT * from zaposleni")];
             case 1:
                 vseDatoteke = _a.sent();
                 res.json(vseDatoteke.rows);
@@ -116,14 +116,36 @@ app.post("/users", function (req, res) { return __awaiter(_this, void 0, void 0,
     });
 }); });
 app.put("/users/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var id, description, updateFiles, error_4;
+    var id, propValue, prop, body, updateFiles, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 id = req.params.id;
-                description = req.body.description;
-                return [4 /*yield*/, pool1.query("UPDATE datoteke set opis = $1 where id= $2", [description, id])];
+                propValue = void 0;
+                prop = void 0;
+                body = req.body;
+                if (body.hasOwnProperty('ime')) {
+                    prop = 'ime';
+                    propValue = body.ime;
+                }
+                else if (body.hasOwnProperty('priimek')) {
+                    prop = 'priimek';
+                    propValue = body.priimek;
+                }
+                else if (body.hasOwnProperty('email')) {
+                    prop = 'email';
+                    propValue = body.email;
+                }
+                else if (body.hasOwnProperty('username')) {
+                    prop = 'username';
+                    propValue = body.username;
+                }
+                else if (body.hasOwnProperty('oddelek_id')) {
+                    prop = 'oddelek_id';
+                    propValue = body.oddelek_id;
+                }
+                return [4 /*yield*/, pool1.query("UPDATE zaposleni set $1 = $2 where id= $3", [prop, propValue, id])];
             case 1:
                 updateFiles = _a.sent();
                 res.json("datoteke updejtane");
@@ -200,14 +222,16 @@ app.get("/projects", function (req, res) { return __awaiter(_this, void 0, void 
 //podatki o tocno dolocenem projektu
 //TODO: rekurzivno pridobivanje podatkov iz baze --> tree traversal
 app.get("/projects/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var aboutProjekti, error_8;
+    var id, aboutProjekti, error_8;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool1.query("SELECT * from datoteke where nivo=0")];
+                id = req.params.id;
+                return [4 /*yield*/, pool1.query("WITH recursive dat AS(select * from datoteke where id = $1 union ALL select d.* from dat inner join datoteke d on d.stars_id = dat.id) select * from dat", [id])];
             case 1:
                 aboutProjekti = _a.sent();
+                res.json(aboutProjekti.rows);
                 return [3 /*break*/, 3];
             case 2:
                 error_8 = _a.sent();
@@ -246,6 +270,7 @@ app.post("/projects", function (req, res) { return __awaiter(_this, void 0, void
         }
     });
 }); });
+//izbrisi datoteko z id id
 app["delete"]("/projects/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     var id, deleteFile, error_10;
     return __generator(this, function (_a) {
@@ -263,6 +288,76 @@ app["delete"]("/projects/:id", function (req, res) { return __awaiter(_this, voi
                 console.error(error_10.message);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
+        }
+    });
+}); });
+//izbrisi vse datoteke povezane z projektom
+//TODO: rekurzivno s esprehodi cez drevo in izbrisi vsak node ki ga ne rabis vec
+app["delete"]("/projects/delete/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var id;
+    return __generator(this, function (_a) {
+        try {
+            id = req.params.id;
+            //TODO: rekurzivni sprehod... :(
+            // const deleteFile = await pool1.query("DELETE FROM datoteke where id= $1",[id]);
+            res.json("File was deleted.");
+        }
+        catch (error) {
+            console.error(error.message);
+        }
+        return [2 /*return*/];
+    });
+}); });
+//FIXME: narobe
+app.put("/projects/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var id, props, body, i, updateFiles, error_11;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 5, , 6]);
+                id = req.params.id;
+                props = [];
+                body = req.body;
+                if (body.hasOwnProperty('ime')) {
+                    props.push({ prop: 'ime', value: body.ime });
+                }
+                if (body.hasOwnProperty('opis')) {
+                    props.push({ prop: 'opis', value: body.opis });
+                }
+                if (body.hasOwnProperty('povezava')) {
+                    props.push({ prop: 'povezava', value: body.povezava });
+                }
+                if (body.hasOwnProperty('stars_id')) {
+                    props.push({ prop: 'stars_id', value: body.stars_id });
+                }
+                if (body.hasOwnProperty('spremenjen')) {
+                    props.push({ prop: 'spremenjen', value: body.spremenjen });
+                }
+                if (body.hasOwnProperty('urejal')) {
+                    props.push({ prop: 'urejal', value: body.urejal });
+                }
+                if (body.hasOwnProperty('vidijolahko')) {
+                    props.push({ prop: 'vidijolahko', value: body.vidijolahko });
+                }
+                i = 0;
+                _a.label = 1;
+            case 1:
+                if (!(i < props.length)) return [3 /*break*/, 4];
+                console.log("UPDATE datoteke set opis = $2 where id= $3", [props[i].prop, props[i].value, id]);
+                return [4 /*yield*/, pool1.query("UPDATE datoteke set opis = $2 where id= $3", [props[i].prop, props[i].value, id])];
+            case 2:
+                updateFiles = _a.sent();
+                res.json("datoteka z id:$1 updejtana", [id]);
+                _a.label = 3;
+            case 3:
+                i++;
+                return [3 /*break*/, 1];
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                error_11 = _a.sent();
+                console.error(error_11.message);
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); });

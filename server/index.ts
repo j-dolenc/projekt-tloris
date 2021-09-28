@@ -126,7 +126,9 @@ app.post("/users", async (req, res) => {
   //TODO: rekurzivno pridobivanje podatkov iz baze --> tree traversal
   app.get("/projects/:id",async(req,res) => {
       try {
-        const aboutProjekti = await pool1.query("SELECT * from datoteke where nivo=0");
+        const {id}= req.params;
+        const aboutProjekti = await pool1.query("WITH recursive dat AS(select * from datoteke where id = $1 union ALL select d.* from dat inner join datoteke d on d.stars_id = dat.id) select * from dat",[id]);
+        res.json(aboutProjekti.rows);    
       } catch (error) {
           console.error(error.message);
       }
@@ -179,50 +181,37 @@ app.delete("/projects/delete/:id",async (req,res) => {
         console.error(error.message);
     }
 });
-
+//FIXME: narobe
 app.put("/projects/:id", async (req,res) =>{
     try {
         const {id} = req.params;
-        let props: { prop: string, value:any }[];
+        let props: { prop: string, value:any }[] = [];
         
         const body= req.body;
         if(body.hasOwnProperty('ime')){
-
-            
             props.push({prop:'ime',value:body.ime});
         }
         if(body.hasOwnProperty('opis')){
             props.push({prop:'opis',value:body.opis});
-            // prop='opis';
-            // propValue=body.priimek;
         }
         if(body.hasOwnProperty('povezava')){
             props.push({prop:'povezava',value:body.povezava});
-            // prop='stars_id';
-            // propValue=body.email;
         }
         if(body.hasOwnProperty('stars_id')){
             props.push({prop:'stars_id',value:body.stars_id});
-            // prop='stars_id';
-            // propValue=body.username;
         }
         if(body.hasOwnProperty('spremenjen')){
             props.push({prop:'spremenjen',value:body.spremenjen});
-            // prop='spremenjen';
-            // propValue=body.oddelek_id;
         }
         if(body.hasOwnProperty('urejal')){
             props.push({prop:'urejal',value:body.urejal});
-            // prop='spremenjen';
-            // propValue=body.oddelek_id;
         }
         if(body.hasOwnProperty('vidijolahko')){
             props.push({prop:'vidijolahko',value:body.vidijolahko});
-            // prop='spremenjen';
-            // propValue=body.oddelek_id;
         }
         for(let i= 0;  i <props.length;i++){
-            const updateFiles = await pool1.query("UPDATE datoteke set $1 = $2 where id= $3",[props[i].prop,props[i].value,id]);
+            console.log("UPDATE datoteke set opis = $2 where id= $3",[props[i].prop,props[i].value,id]);
+            const updateFiles = await pool1.query("UPDATE datoteke set opis = $2 where id= $3",[props[i].prop,props[i].value,id]);
             res.json("datoteka z id:$1 updejtana",[id]);
         }
         
