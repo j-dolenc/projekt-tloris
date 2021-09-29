@@ -60,32 +60,52 @@ app.post("/users", async (req, res) => {
   app.put("/users/:id",async(req,res) =>{
       try {
         const {id} = req.params;
-        let propValue:any;
-        let prop:string;
+        let props: { prop: string, value:any }[] = [];
+        
         const body= req.body;
         if(body.hasOwnProperty('ime')){
-        prop='ime';
-        propValue=body.ime;
+            props.push({prop:'ime',value:body.ime});
         }
-        else if(body.hasOwnProperty('priimek')){
-            prop='priimek';
-            propValue=body.priimek;
+        if(body.hasOwnProperty('priimek')){
+            
+            props.push({prop:'priimek',value:body.priimek});
         }
-        else if(body.hasOwnProperty('email')){
-            prop='email';
-            propValue=body.email;
+        if(body.hasOwnProperty('email')){
+            props.push({prop:'email',value:body.email});
         }
-        else if(body.hasOwnProperty('username')){
-            prop='username';
-            propValue=body.username;
+        if(body.hasOwnProperty('username')){
+            props.push({prop:'username',value:body.username});
         }
-        else if(body.hasOwnProperty('oddelek_id')){
-            prop='oddelek_id';
-            propValue=body.oddelek_id;
+        if(body.hasOwnProperty('oddelek_id')){
+            props.push({prop:'oddelek_id',value:body.oddelek_id});
         }
         
-        const updateFiles = await pool1.query("UPDATE zaposleni set $1 = $2 where id= $3",[prop,propValue,id]);
-        res.json("datoteke updejtane");
+        let updateQuery:string ="UPDATE zaposleni set ";
+        for(let i= 0;  i <props.length;i++){
+            if(i < props.length-1){
+                if(props[i].prop === "oddelek_id"){
+
+                    updateQuery=updateQuery.concat(`${props[i].prop}=${props[i].value}, `);
+                }
+                else{
+                    updateQuery=updateQuery.concat(`${props[i].prop}='${props[i].value}', `);
+                }
+            }
+            else{
+                if(props[i].prop === "oddelek_id"){
+
+                    updateQuery=updateQuery.concat(`${props[i].prop}=${props[i].value} where id =${id};`);
+                }
+                else{
+                    updateQuery=updateQuery.concat(`${props[i].prop}='${props[i].value}' where id =${id};`);
+                }
+                
+            }
+        }
+        console.log(updateQuery);
+        const updateFiles = await pool1.query(updateQuery);
+        res.json("Zaposleni posodobljen.");
+        
       } catch (error) {
           console.error(error.message);
       }
