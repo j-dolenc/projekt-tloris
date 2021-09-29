@@ -55,7 +55,8 @@ app.post("/users", async (req, res) => {
       console.error(error.message);
     }
   });
-  
+  //FIXME:ne dela prav -> poisci drugo resitev...
+  //zaenkrat se user ne bo spreminjal, tako da tolele lahko stagnira nekaj časa
   app.put("/users/:id",async(req,res) =>{
       try {
         const {id} = req.params;
@@ -123,7 +124,7 @@ app.post("/users", async (req, res) => {
 
   
   //podatki o tocno dolocenem projektu
-  //TODO: rekurzivno pridobivanje podatkov iz baze --> tree traversal
+  // rekurzivno pridobivanje podatkov iz baze --> tree traversal
   app.get("/projects/:id",async(req,res) => {
       try {
         const {id}= req.params;
@@ -159,7 +160,7 @@ app.post("/users", async (req, res) => {
   
   //izbrisi datoteko z id id
   
-  app.delete("/projects/:id",async (req,res) => {
+  app.delete("/file/:id",async (req,res) => {
     try {
         const {id} = req.params;
         const deleteFile = await pool1.query("DELETE FROM datoteke where id= $1",[id]);
@@ -170,18 +171,20 @@ app.post("/users", async (req, res) => {
 });
 
 //izbrisi vse datoteke povezane z projektom
-//TODO: rekurzivno s esprehodi cez drevo in izbrisi vsak node ki ga ne rabis vec
-app.delete("/projects/delete/:id",async (req,res) => {
+// rekurzivno s esprehodi cez drevo in izbrisi vsak node ki ga ne rabis vec
+app.delete("/projects/:id",async (req,res) => {
     try {
         const {id} = req.params;
-        //TODO: rekurzivni sprehod... :(
         // const deleteFile = await pool1.query("DELETE FROM datoteke where id= $1",[id]);
+        const aboutProjekti = await pool1.query("WITH recursive dat AS(select * from datoteke where id = $1 union ALL select d.* from dat inner join datoteke d on d.stars_id = dat.id) delete from datoteke where id in (select id from dat)",[id]);
         res.json("File was deleted.");
     } catch (error) {
         console.error(error.message);
     }
 });
-//FIXME: narobe
+//FIXED, zdej deluje tko da se prej sestavi ceu query statement in potem spremeni
+
+//kako napisat request in query ko neves koliko propertijevv bos spreminjal v vrstici?
 app.put("/projects/:id", async (req,res) =>{
     try {
         const {id} = req.params;
@@ -192,6 +195,7 @@ app.put("/projects/:id", async (req,res) =>{
             props.push({prop:'ime',value:body.ime});
         }
         if(body.hasOwnProperty('opis')){
+            
             props.push({prop:'opis',value:body.opis});
         }
         if(body.hasOwnProperty('povezava')){
@@ -209,11 +213,31 @@ app.put("/projects/:id", async (req,res) =>{
         if(body.hasOwnProperty('vidijolahko')){
             props.push({prop:'vidijolahko',value:body.vidijolahko});
         }
+        let updateQuery:string ="UPDATE datoteke set ";
         for(let i= 0;  i <props.length;i++){
-            console.log("UPDATE datoteke set opis = $2 where id= $3",[props[i].prop,props[i].value,id]);
-            const updateFiles = await pool1.query("UPDATE datoteke set opis = $2 where id= $3",[props[i].prop,props[i].value,id]);
-            res.json("datoteka z id:$1 updejtana",[id]);
+            if(i < props.length-1){
+                if(props[i].prop === "stars_id" || props[i].prop === "urejal"){
+
+                    updateQuery=updateQuery.concat(`${props[i].prop}=${props[i].value}, `);
+                }
+                else{
+                    updateQuery=updateQuery.concat(`${props[i].prop}='${props[i].value}', `);
+                }
+            }
+            else{
+                if(props[i].prop === "stars_id" || props[i].prop === "urejal"){
+
+                    updateQuery=updateQuery.concat(`${props[i].prop}=${props[i].value} where id =${id};`);
+                }
+                else{
+                    updateQuery=updateQuery.concat(`${props[i].prop}='${props[i].value}' where id =${id};`);
+                }
+                
+            }
         }
+        console.log(updateQuery);
+        const updateFiles = await pool1.query(updateQuery);
+        res.json("datoteka updejtana");
         
       } catch (error) {
           console.error(error.message);
