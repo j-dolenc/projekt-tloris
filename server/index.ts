@@ -263,6 +263,16 @@ app.put("/projects/:id", async (req,res) =>{
           console.error(error.message);
       }
 });
+app.get("/oddelki",async (req,res) => {
+    try {
+        const vseDatoteke= await pool1.query("SELECT * from oddelki");
+        res.json(vseDatoteke.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+
 
 app.listen(5000, () => {
   console.log("server started on port 5000");
