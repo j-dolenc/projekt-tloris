@@ -1,3 +1,4 @@
+import DropDown from "../UI/DropDown";
 import classes from "./AddProject.module.css";
 
 
@@ -21,10 +22,9 @@ const AddProject: React.FC<{ onCancelClick: () => void }> = () => {
           <label htmlFor="description">Opis Projekta</label>
           <input type="text" id="description"></input>
         </div>
-        <div className={classes.control}>
-          <label htmlFor="description"></label>
-          <input type="text" id="description"></input>
-        </div>
+        {/* moznost, kdo lahko vidi projekt, naredi
+            z izbiro večih moćnosti.... svoja komponenta... */}
+        <DropDown/>
         
       </form>
     </section>
