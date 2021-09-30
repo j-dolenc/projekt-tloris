@@ -43,23 +43,25 @@ const Login: React.FC <{onCancelClick:() => void}> = (props) =>{
 
     //     setPass((prev)=> [tempass,event.currentTarget.value]);
     // }
-    return <section className={classes.auth}>
+    return (
+      <section className={classes.auth}>
         <h1>Log In</h1>
         <form onSubmit={onSubmitHanlder}>
-            <div className={classes.control}>
-            <label htmlFor='username'>Username or Email</label>
-            <input type='text' id='username' ref={userRef}></input>
-            </div>
-            <div className={classes.control}>
-           <label htmlFor='password'>Password</label>
-            <input  type='password' id='password' ref={passRef}></input>
+          <div className={classes.control}>
+            <label htmlFor="username">Username or Email</label>
+            <input type="text" id="username" ref={userRef}></input>
+          </div>
+          <div className={classes.control}>
+            <label htmlFor="password">Password</label>
+            <input type="password" id="password" ref={passRef}></input>
             <input type="submit" value="Submit"></input>
-            </div>
-            <div className={classes.actions}>
-                <button >Cancel</button>
-                <button>Log In</button>
-            </div>
+          </div>
+          <div className={classes.actions}>
+            <button>Cancel</button>
+            <button>Log In</button>
+          </div>
         </form>
-    </section>
+      </section>
+    );
 }
 export default Login;

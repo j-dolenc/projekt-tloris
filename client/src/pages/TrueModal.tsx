@@ -1,10 +1,12 @@
-import { Fragment, useState } from "react";
 
-import Login from "../components/UI/Login";
+import { Fragment, useState } from "react";
+import AddProject from "../components/projects/AddProject";
+
+
 
 import classes from "./Modal.module.css";
 
-const TrueModal: React.FC  = (props) => {
+const TrueModal = () => {
   const [showModal, setShowModal] = useState(true);
   const onBackdropClick = () => {
     setShowModal(false);
@@ -14,7 +16,7 @@ const TrueModal: React.FC  = (props) => {
       <div className={classes.backdrop} onClick={onBackdropClick}></div>
       <div className={classes.modal}>
         <div className={classes.content}>
-          {props.children}
+          <AddProject onCancelClick={onBackdropClick} />
         </div>
       </div>
     </div>
