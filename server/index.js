@@ -115,42 +115,55 @@ app.post("/users", function (req, res) { return __awaiter(_this, void 0, void 0,
         }
     });
 }); });
-//FIXME:ne dela prav -> poisci drugo resitev...
 //zaenkrat se user ne bo spreminjal, tako da tolele lahko stagnira nekaj časa
 app.put("/users/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var id, propValue, prop, body, updateFiles, error_4;
+    var id, props, body, updateQuery, i, updateFiles, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 id = req.params.id;
-                propValue = void 0;
-                prop = void 0;
+                props = [];
                 body = req.body;
                 if (body.hasOwnProperty('ime')) {
-                    prop = 'ime';
-                    propValue = body.ime;
+                    props.push({ prop: 'ime', value: body.ime });
                 }
-                else if (body.hasOwnProperty('priimek')) {
-                    prop = 'priimek';
-                    propValue = body.priimek;
+                if (body.hasOwnProperty('priimek')) {
+                    props.push({ prop: 'priimek', value: body.priimek });
                 }
-                else if (body.hasOwnProperty('email')) {
-                    prop = 'email';
-                    propValue = body.email;
+                if (body.hasOwnProperty('email')) {
+                    props.push({ prop: 'email', value: body.email });
                 }
-                else if (body.hasOwnProperty('username')) {
-                    prop = 'username';
-                    propValue = body.username;
+                if (body.hasOwnProperty('username')) {
+                    props.push({ prop: 'username', value: body.username });
                 }
-                else if (body.hasOwnProperty('oddelek_id')) {
-                    prop = 'oddelek_id';
-                    propValue = body.oddelek_id;
+                if (body.hasOwnProperty('oddelek_id')) {
+                    props.push({ prop: 'oddelek_id', value: body.oddelek_id });
                 }
-                return [4 /*yield*/, pool1.query("UPDATE zaposleni set $1 = $2 where id= $3", [prop, propValue, id])];
+                updateQuery = "UPDATE zaposleni set ";
+                for (i = 0; i < props.length; i++) {
+                    if (i < props.length - 1) {
+                        if (props[i].prop === "oddelek_id") {
+                            updateQuery = updateQuery.concat(props[i].prop + "=" + props[i].value + ", ");
+                        }
+                        else {
+                            updateQuery = updateQuery.concat(props[i].prop + "='" + props[i].value + "', ");
+                        }
+                    }
+                    else {
+                        if (props[i].prop === "oddelek_id") {
+                            updateQuery = updateQuery.concat(props[i].prop + "=" + props[i].value + " where id =" + id + ";");
+                        }
+                        else {
+                            updateQuery = updateQuery.concat(props[i].prop + "='" + props[i].value + "' where id =" + id + ";");
+                        }
+                    }
+                }
+                console.log(updateQuery);
+                return [4 /*yield*/, pool1.query(updateQuery)];
             case 1:
                 updateFiles = _a.sent();
-                res.json("datoteke updejtane");
+                res.json("Zaposleni posodobljen.");
                 return [3 /*break*/, 3];
             case 2:
                 error_4 = _a.sent();
@@ -315,8 +328,8 @@ app["delete"]("/projects/:id", function (req, res) { return __awaiter(_this, voi
         }
     });
 }); });
-//FIXME: narobe
-//kako napisat request in query ko neves koliko propertiejv bos spreminjal v vrstici?
+//FIXED, zdej deluje tko da se prej sestavi ceu query statement in potem spremeni
+//kako napisat request in query ko neves koliko propertijevv bos spreminjal v vrstici?
 app.put("/projects/:id", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     var id, props, body, updateQuery, i, updateFiles, error_12;
     return __generator(this, function (_a) {
@@ -380,46 +393,6 @@ app.put("/projects/:id", function (req, res) { return __awaiter(_this, void 0, v
         }
     });
 }); });
-// app.post("/files", async (req, res) => {
-//   //await
-//   try {
-//     const newFile = await pool1.query(
-//       "insert into datoteke(ime, opis, povezava,starts_id,nivo,vidijolahko) values ('prvaDatoteka','gibberish','tam nekje',1,2,'1,2,3') returning *"
-//     );
-//     res.json(newFile.rows[0]);
-//   } catch (error) {
-//     console.error(error.message);
-//   }
-// });
-// app.get("/files/:id",async(req,res) => {
-//     try {
-//         const {id} = req.params;
-//         const izbraneDatoteke= await pool1.query("SELECT * from datoteke where $1=id",[id]);
-//         res.json(izbraneDatoteke.rows[0]);
-//         res.json(izbraneDatoteke.rows);
-//     } catch (error) {
-//         console.error(error.message);
-//     }
-// })
-// app.put("/files/:id",async(req,res) =>{
-//     try {
-//         const {id} = req.params;
-//         const {description} = req.body;
-//         const updateFiles = await pool1.query("UPDATE datoteke set opis = $1 where id= $2",[description,id]);
-//         res.json("datoteke updejtane");
-//     } catch (error) {
-//         console.error(error.message);
-//     }
-// });
-// app.delete("/files/:id",async(req,res) =>{
-//     try {
-//         const {id} = req.params;
-//         const deleteFile = await pool1.query("DELETE FROM datoteke where id= $1",[id]);
-//         res.json("File was deleted.");
-//     } catch (error) {
-//         console.error(error.message);
-//     }
-// });
 app.listen(5000, function () {
     console.log("server started on port 5000");
 });
