@@ -393,6 +393,25 @@ app.put("/projects/:id", function (req, res) { return __awaiter(_this, void 0, v
         }
     });
 }); });
+app.get("/oddelki", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var vseDatoteke, error_13;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool1.query("SELECT * from oddelki")];
+            case 1:
+                vseDatoteke = _a.sent();
+                res.json(vseDatoteke.rows);
+                return [3 /*break*/, 3];
+            case 2:
+                error_13 = _a.sent();
+                console.error(error_13.message);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 app.listen(5000, function () {
     console.log("server started on port 5000");
 });
